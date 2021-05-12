@@ -13,6 +13,7 @@ imagesToKeep=$(echo "${runningContainers}" "${excludedImages}" | sed 's/ /\n/g')
 dockerImages=$(docker images --format '{{.Repository}}:{{.Tag}};{{.ID}}')
 
 for image in ${imagesToKeep}; do
+    image=$(echo $image | sed 's/\//\\\//g')
     dockerImages=$(echo "${dockerImages}" | sed "/${image}/d")
 done
 
@@ -29,6 +30,6 @@ if [[ "${dockerImages}" ]]; then
         echo -e "\nFailed to approve above actions. Exit 1"
         exit 1
     else
-        echo "${dockerImages}" | cut -d';' -f2 | xargs docker rmi -f  
+        echo "${dockerImages}" | cut -d';' -f2 | xargs docker rmi -f
     fi
 fi
